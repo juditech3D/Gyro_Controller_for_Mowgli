@@ -258,7 +258,8 @@
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     <div class="container">
         <h1>Gyro Mowgli</h1>
-        
+        <label for="num_leds">Nombre de LEDs (Bande 1) :</label>
+        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
         <label for="strip_2">Activer 2<sup>e</sup> bande LED (Indication Batterie - Vert/Jaune/Rouge) :</label>
         <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
@@ -266,7 +267,6 @@
             <label for="num_leds_2">Nombre de LEDs (Bande 2) :</label>
             <input type="number" name="num_leds_2" id="num_leds_2" min="1" max="100" value="{{ num_leds_2 }}" onchange="updateParameter('num_leds_2', this.value)">
             <div class="led-visual" id="battery_visual" style="width: 100%; height: 20px; background-color: #00FF00;"></div>
-        </div>
         </div>
 
         <label for="strip_3">Activer 3<sup>e</sup> bande LED (Réception GPS) :</label>
@@ -278,7 +278,6 @@
             <input type="color" id="gps_color" name="gps_color" value="#00FF00" onchange="updateParameter('gps_color', this.value)">
             <div class="led-visual" id="gps_visual" style="width: 100%; height: 20px; background-color: #00FF00;"></div>
         </div>
-        </div>
 
         <label for="strip_4">Activer 4<sup>e</sup> bande LED (Réception WiFi) :</label>
         <input type="checkbox" name="strip_4" id="strip_4" onchange="updateParameter('strip_4', this.checked)">
@@ -289,13 +288,22 @@
             <input type="color" id="wifi_color" name="wifi_color" value="#0000FF" onchange="updateParameter('wifi_color', this.value)">
             <div class="led-visual" id="wifi_visual" style="width: 100%; height: 20px; background-color: #0000FF;"></div>
         </div>
-        </div>
         <label for="num_leds">Nombre de LEDs (Bande 1) :</label>
         <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
-        
+        <label for="strip_2">Activer 2<sup>e</sup> bande LED :</label>
+        <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
+        <div id="strip_2_settings" style="display: none;">
+            <label for="num_leds_2">Nombre de LEDs (Bande 2) :</label>
+            <input type="number" name="num_leds_2" id="num_leds_2" min="1" max="100" value="{{ num_leds_2 }}" onchange="updateParameter('num_leds_2', this.value)">
+        </div>
 
-        
+        <label for="strip_3">Activer 3<sup>e</sup> bande LED :</label>
+        <input type="checkbox" name="strip_3" id="strip_3" onchange="updateParameter('strip_3', this.checked)">
+        <div id="strip_3_settings" style="display: none;">
+            <label for="num_leds_3">Nombre de LEDs (Bande 3) :</label>
+            <input type="number" name="num_leds_3" id="num_leds_3" min="1" max="100" value="{{ num_leds_3 }}" onchange="updateParameter('num_leds_3', this.value)">
+        </div>
         <label for="num_leds">Nombre de LEDs :</label>
         <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
