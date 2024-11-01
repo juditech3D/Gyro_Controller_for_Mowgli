@@ -252,13 +252,47 @@
             updateBatteryLevel(simulatedLevel);
             updateBatteryVisual(simulatedLevel);
         }, 5000);
+    
+        function updateBatteryVisual(level) {
+            const batteryVisual = document.getElementById('battery_visual');
+            if (level > 50) {
+                batteryVisual.style.backgroundColor = '#00FF00';
+            } else if (level > 20) {
+                batteryVisual.style.backgroundColor = '#FFFF00';
+            } else {
+                batteryVisual.style.backgroundColor = '#FF0000';
+            }
+        }
+
+        function updateGPSVisual() {
+            const gpsColor = document.getElementById('gps_color').value;
+            const gpsVisual = document.getElementById('gps_visual');
+            gpsVisual.style.backgroundColor = gpsColor;
+        }
+
+        function updateWiFiVisual() {
+            const wifiColor = document.getElementById('wifi_color').value;
+            const wifiVisual = document.getElementById('wifi_visual');
+            wifiVisual.style.backgroundColor = wifiColor;
+        }
+
+        document.getElementById('gps_color').addEventListener('input', updateGPSVisual);
+        document.getElementById('wifi_color').addEventListener('input', updateWiFiVisual);
+
+        // Simulation du niveau de batterie (pour test uniquement)
+        setInterval(function() {
+            const simulatedLevel = Math.floor(Math.random() * 100);
+            updateBatteryLevel(simulatedLevel);
+            updateBatteryVisual(simulatedLevel);
+        }, 5000);
     </script>
 </head>
 <body>
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     <div class="container">
         <h1>Gyro Mowgli</h1>
-        
+        <label for="num_leds">Nombre de LEDs (Bande 1) :</label>
+        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
         <label for="strip_2">Activer 2<sup>e</sup> bande LED (Indication Batterie - Vert/Jaune/Rouge) :</label>
         <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
@@ -293,9 +327,19 @@
         <label for="num_leds">Nombre de LEDs (Bande 1) :</label>
         <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
-        
+        <label for="strip_2">Activer 2<sup>e</sup> bande LED :</label>
+        <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
+        <div id="strip_2_settings" style="display: none;">
+            <label for="num_leds_2">Nombre de LEDs (Bande 2) :</label>
+            <input type="number" name="num_leds_2" id="num_leds_2" min="1" max="100" value="{{ num_leds_2 }}" onchange="updateParameter('num_leds_2', this.value)">
+        </div>
 
-        
+        <label for="strip_3">Activer 3<sup>e</sup> bande LED :</label>
+        <input type="checkbox" name="strip_3" id="strip_3" onchange="updateParameter('strip_3', this.checked)">
+        <div id="strip_3_settings" style="display: none;">
+            <label for="num_leds_3">Nombre de LEDs (Bande 3) :</label>
+            <input type="number" name="num_leds_3" id="num_leds_3" min="1" max="100" value="{{ num_leds_3 }}" onchange="updateParameter('num_leds_3', this.value)">
+        </div>
         <label for="num_leds">Nombre de LEDs :</label>
         <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
