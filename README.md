@@ -37,12 +37,23 @@ Déplacez-vous dans le répertoire cloné :
 cd Gyro_Controller_for_Mowgli
 ```
 
-### Étape 4 : Installer les dépendances
-Installez les dépendances nécessaires en exécutant :
-```bash
-sudo apt-get install -y python3 python3-pip
-pip3 install -r requirements.txt
-```
+### Étape 4 : Créer et activer un environnement virtuel
+Pour installer les dépendances dans un environnement virtuel, suivez les étapes suivantes :
+
+1. Créez un environnement virtuel dans le répertoire du projet :
+   ```bash
+   python3 -m venv venv
+   ```
+
+2. Activez l'environnement virtuel :
+   ```bash
+   source venv/bin/activate
+   ```
+
+3. Installez les dépendances depuis le fichier `requirements.txt` :
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ### Étape 5 : Configuration pour le lancement automatique au démarrage
 Pour lancer le gyrophare automatiquement au démarrage du Raspberry Pi, créez un fichier de service `systemd` :
@@ -59,7 +70,7 @@ Pour lancer le gyrophare automatiquement au démarrage du Raspberry Pi, créez u
    After=network.target
 
    [Service]
-   ExecStart=/usr/bin/python3 /home/<user>/Gyro_Controller_for_Mowgli/main.py
+   ExecStart=/home/<user>/Gyro_Controller_for_Mowgli/venv/bin/python /home/<user>/Gyro_Controller_for_Mowgli/main.py
    WorkingDirectory=/home/<user>/Gyro_Controller_for_Mowgli
    StandardOutput=inherit
    StandardError=inherit
@@ -90,13 +101,12 @@ Pour lancer le gyrophare automatiquement au démarrage du Raspberry Pi, créez u
 ### Étape 6 : Lancer le gyrophare
 Si vous n'avez pas configuré le démarrage automatique, lancez manuellement le gyrophare avec la commande suivante :
 ```bash
-python3 main.py
+source venv/bin/activate && python main.py
 ```
 
 ---
 
-En suivant ces étapes, votre gyrophare à LED démarrera automatiquement à chaque démarrage de votre Raspberry Pi.
-
+En suivant ces étapes, votre gyrophare à LED démarrera automatiquement à chaque démarrage de votre Raspberry Pi, en utilisant un environnement virtuel pour une meilleure gestion des dépendances.
 
 ## Utilisation
 - Personnalisez les effets lumineux en modifiant le fichier `effects_config.json`.
