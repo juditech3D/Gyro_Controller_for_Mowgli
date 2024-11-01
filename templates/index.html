@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrôle du Bandeau LED</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        input[type="color"], input[type="number"], input[type="range"], select {
+            margin: 10px 0;
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        function updateParameter(param, value) {
+            fetch(`/update_param`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [param]: value })
+            });
+        }
+
+        function updateColor() {
+            const color = document.getElementById('color').value;
+            updateParameter('color', color);
+        }
+
+        function updateEffect() {
+            const effect = document.getElementById('effect').value;
+            updateParameter('effect', effect);
+        }
+
+        function updateDefaultEffect() {
+            const defaultEffect = document.getElementById('default_effect').value;
+            updateParameter('default_effect', defaultEffect);
+        }
+
+        function updateNumLeds() {
+            const numLeds = document.getElementById('num_leds').value;
+            updateParameter('num_leds', numLeds);
+        }
+
+        function updateBrightness() {
+            const brightness = document.getElementById('brightness').value;
+            updateParameter('brightness', brightness);
+        }
+
+        function updateSpeed() {
+            const speed = document.getElementById('speed').value;
+            updateParameter('speed', speed);
+        }
+    </script>
+</head>
+<body>
+    <h1>Contrôle du Bandeau LED</h1>
+    <form action="/turn_on" method="post">
+        <label for="num_leds">Nombre de LEDs :</label>
+        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
+
+        <label for="effect">Effet :</label>
+        <select name="effect" id="effect" onchange="updateEffect()">
+            <option value="static" {% if effect == "static" %}selected{% endif %}>Couleur Statique</option>
+            <option value="wipe" {% if effect == "wipe" %}selected{% endif %}>Balayage</option>
+            <option value="rainbow" {% if effect == "rainbow" %}selected{% endif %}>Arc-en-ciel</option>
+        </select>
+        
+        <label for="default_effect">Effet par Défaut :</label>
+        <select name="default_effect" id="default_effect" onchange="updateDefaultEffect()">
+            <option value="static" {% if default_effect == "static" %}selected{% endif %}>Couleur Statique</option>
+            <option value="wipe" {% if default_effect == "wipe" %}selected{% endif %}>Balayage</option>
+            <option value="rainbow" {% if default_effect == "rainbow" %}selected{% endif %}>Arc-en-ciel</option>
+        </select>
+
+        <label for="color">Couleur :</label>
+        <input type="color" name="color" id="color" value="{{ color }}" onchange="updateColor()">
+        
+        <label for="brightness">Luminosité :</label>
+        <input type="range" name="brightness" id="brightness" min="1" max="31" value="{{ brightness }}" onchange="updateBrightness()">
+        
+        <label for="speed">Vitesse :</label>
+        <input type="range" name="speed" id="speed" min="50" max="100" value="{{ speed }}" onchange="updateSpeed()">
+        
+        <label for="loop">Boucle :</label>
+        <input type="checkbox" name="loop" id="loop" {% if loop %}checked{% endif %} onchange="updateParameter('loop', this.checked)">
+        
+        <button type="submit">Allumer les LEDs</button>
+    </form>
+    <br>
+    <form action="/clear" method="post">
+        <button type="submit">Éteindre les LEDs</button>
+    </form>
+</body>
+</html>
+
