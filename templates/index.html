@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrôle du Bandeau LED</title>
+    <title>Gyro Mowgli</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -17,6 +17,10 @@
             margin: 0;
             transition: background 0.5s, color 0.5s;
         }
+        .light-theme {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
         .container {
             background: #34495e;
             padding: 30px;
@@ -25,6 +29,9 @@
             width: 90%;
             max-width: 600px;
             transition: background 0.5s;
+        }
+        .light-theme .container {
+            background: #ffffff;
         }
         h1 {
             margin-bottom: 20px;
@@ -54,6 +61,10 @@
             font-size: 16px;
             transition: background 0.3s;
         }
+        .light-theme button {
+            background: #e74c3c;
+            color: #ffffff;
+        }
         button:hover {
             background: #c0392b;
         }
@@ -73,6 +84,9 @@
             font-size: 24px;
             color: #ecf0f1;
             transition: color 0.5s;
+        }
+        .light-theme .theme-toggle {
+            color: #2c3e50;
         }
         @media (max-width: 600px) {
             .container {
@@ -94,6 +108,12 @@
             label, input, select, button {
                 font-size: 14px;
             }
+        }
+        .color-picker {
+            width: 100%;
+            height: 150px;
+            border: none;
+            cursor: pointer;
         }
     </style>
     <script>
@@ -137,16 +157,13 @@
 
         function toggleTheme() {
             const body = document.body;
-            const container = document.querySelector('.container');
             const themeToggleBtn = document.querySelector('.theme-toggle');
 
             if (body.classList.contains('light-theme')) {
                 body.classList.remove('light-theme');
-                container.classList.remove('light-theme');
                 themeToggleBtn.innerHTML = '🌙';
             } else {
                 body.classList.add('light-theme');
-                container.classList.add('light-theme');
                 themeToggleBtn.innerHTML = '☀️';
             }
         }
@@ -155,7 +172,7 @@
 <body>
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     <div class="container">
-        <h1>Contrôle du Bandeau LED</h1>
+        <h1>Gyro Mowgli</h1>
         <form action="/turn_on" method="post">
             <label for="num_leds">Nombre de LEDs :</label>
             <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
@@ -175,7 +192,7 @@
             </select>
 
             <label for="color">Couleur :</label>
-            <input type="color" name="color" id="color" value="{{ color }}" onchange="updateColor()">
+            <input type="color" class="color-picker" name="color" id="color" value="{{ color }}" onchange="updateColor()">
             
             <label for="brightness">Luminosité :</label>
             <input type="range" name="brightness" id="brightness" min="1" max="31" value="{{ brightness }}" onchange="updateBrightness()">
