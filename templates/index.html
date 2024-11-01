@@ -51,7 +51,6 @@
             border-radius: 5px;
         }
         button {
-            
             margin-top: 20px;
             padding: 15px;
             background: #e74c3c;
@@ -61,7 +60,6 @@
             cursor: pointer;
             font-size: 16px;
             transition: background 0.3s;
-        
             width: 48%;
             margin-right: 2%;
         }
@@ -73,9 +71,7 @@
             background: #c0392b;
         }
         .btn-action {
-            
             background: #3498db;
-        
         }
         .btn-clear:hover {
             background: #2980b9;
@@ -147,8 +143,8 @@
         }
 
         function updateNumLeds() {
-            const numLeds = document.getElementById('num_leds').value;
-            updateParameter('num_leds', numLeds);
+            const num_leds = document.getElementById('num_leds').value;
+            updateParameter('num_leds', num_leds);
         }
 
         function updateBrightness() {
@@ -173,17 +169,7 @@
                 themeToggleBtn.innerHTML = '☀️';
             }
         }
-    
-        document.getElementById('strip_2').addEventListener('change', function() {
-            const strip2Settings = document.getElementById('strip_2_settings');
-            strip2Settings.style.display = this.checked ? 'block' : 'none';
-        });
 
-        document.getElementById('strip_3').addEventListener('change', function() {
-            const strip3Settings = document.getElementById('strip_3_settings');
-            strip3Settings.style.display = this.checked ? 'block' : 'none';
-        });
-    
         document.getElementById('strip_2').addEventListener('change', function() {
             const strip2Settings = document.getElementById('strip_2_settings');
             strip2Settings.style.display = this.checked ? 'block' : 'none';
@@ -198,7 +184,7 @@
             const strip4Settings = document.getElementById('strip_4_settings');
             strip4Settings.style.display = this.checked ? 'block' : 'none';
         });
-    
+
         function updateBatteryLevel(level) {
             const strip2 = document.getElementById('strip_2');
             if (strip2.checked) {
@@ -218,8 +204,9 @@
         setInterval(function() {
             const simulatedLevel = Math.floor(Math.random() * 100);
             updateBatteryLevel(simulatedLevel);
+            updateBatteryVisual(simulatedLevel);
         }, 5000);
-    
+
         function updateBatteryVisual(level) {
             const batteryVisual = document.getElementById('battery_visual');
             if (level > 50) {
@@ -245,46 +232,6 @@
 
         document.getElementById('gps_color').addEventListener('input', updateGPSVisual);
         document.getElementById('wifi_color').addEventListener('input', updateWiFiVisual);
-
-        // Simulation du niveau de batterie (pour test uniquement)
-        setInterval(function() {
-            const simulatedLevel = Math.floor(Math.random() * 100);
-            updateBatteryLevel(simulatedLevel);
-            updateBatteryVisual(simulatedLevel);
-        }, 5000);
-    
-        function updateBatteryVisual(level) {
-            const batteryVisual = document.getElementById('battery_visual');
-            if (level > 50) {
-                batteryVisual.style.backgroundColor = '#00FF00';
-            } else if (level > 20) {
-                batteryVisual.style.backgroundColor = '#FFFF00';
-            } else {
-                batteryVisual.style.backgroundColor = '#FF0000';
-            }
-        }
-
-        function updateGPSVisual() {
-            const gpsColor = document.getElementById('gps_color').value;
-            const gpsVisual = document.getElementById('gps_visual');
-            gpsVisual.style.backgroundColor = gpsColor;
-        }
-
-        function updateWiFiVisual() {
-            const wifiColor = document.getElementById('wifi_color').value;
-            const wifiVisual = document.getElementById('wifi_visual');
-            wifiVisual.style.backgroundColor = wifiColor;
-        }
-
-        document.getElementById('gps_color').addEventListener('input', updateGPSVisual);
-        document.getElementById('wifi_color').addEventListener('input', updateWiFiVisual);
-
-        // Simulation du niveau de batterie (pour test uniquement)
-        setInterval(function() {
-            const simulatedLevel = Math.floor(Math.random() * 100);
-            updateBatteryLevel(simulatedLevel);
-            updateBatteryVisual(simulatedLevel);
-        }, 5000);
     </script>
 </head>
 <body>
@@ -301,62 +248,9 @@
             <input type="number" name="num_leds_2" id="num_leds_2" min="1" max="100" value="{{ num_leds_2 }}" onchange="updateParameter('num_leds_2', this.value)">
             <div class="led-visual" id="battery_visual" style="width: 100%; height: 20px; background-color: #00FF00;"></div>
         </div>
-        </div>
 
         <label for="strip_3">Activer 3<sup>e</sup> bande LED (Réception GPS) :</label>
         <input type="checkbox" name="strip_3" id="strip_3" onchange="updateParameter('strip_3', this.checked)">
         <div id="strip_3_settings" style="display: none;">
             <label for="num_leds_3">Nombre de LEDs (Bande 3) :</label>
-            <input type="number" name="num_leds_3" id="num_leds_3" min="1" max="100" value="{{ num_leds_3 }}" onchange="updateParameter('num_leds_3', this.value)">
-            <label for="gps_color">Couleur pour la Réception GPS :</label>
-            <input type="color" id="gps_color" name="gps_color" value="#00FF00" onchange="updateParameter('gps_color', this.value)">
-            <div class="led-visual" id="gps_visual" style="width: 100%; height: 20px; background-color: #00FF00;"></div>
-        </div>
-        </div>
-
-        <label for="strip_4">Activer 4<sup>e</sup> bande LED (Réception WiFi) :</label>
-        <input type="checkbox" name="strip_4" id="strip_4" onchange="updateParameter('strip_4', this.checked)">
-        <div id="strip_4_settings" style="display: none;">
-            <label for="num_leds_4">Nombre de LEDs (Bande 4) :</label>
-            <input type="number" name="num_leds_4" id="num_leds_4" min="1" max="100" value="{{ num_leds_4 }}" onchange="updateParameter('num_leds_4', this.value)">
-            <label for="wifi_color">Couleur pour la Réception WiFi :</label>
-            <input type="color" id="wifi_color" name="wifi_color" value="#0000FF" onchange="updateParameter('wifi_color', this.value)">
-            <div class="led-visual" id="wifi_visual" style="width: 100%; height: 20px; background-color: #0000FF;"></div>
-        </div>
-        </div>
-        <label for="num_leds">Nombre de LEDs (Bande 1) :</label>
-        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
-
-        <label for="strip_2">Activer 2<sup>e</sup> bande LED :</label>
-        <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
-        <div id="strip_2_settings" style="display: none;">
-            <label for="num_leds_2">Nombre de LEDs (Bande 2) :</label>
-            <input type="number" name="num_leds_2" id="num_leds_2" min="1" max="100" value="{{ num_leds_2 }}" onchange="updateParameter('num_leds_2', this.value)">
-        </div>
-
-        <label for="strip_3">Activer 3<sup>e</sup> bande LED :</label>
-        <input type="checkbox" name="strip_3" id="strip_3" onchange="updateParameter('strip_3', this.checked)">
-        <div id="strip_3_settings" style="display: none;">
-            <label for="num_leds_3">Nombre de LEDs (Bande 3) :</label>
-            <input type="number" name="num_leds_3" id="num_leds_3" min="1" max="100" value="{{ num_leds_3 }}" onchange="updateParameter('num_leds_3', this.value)">
-        </div>
-        <label for="num_leds">Nombre de LEDs :</label>
-        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
-
-        <label for="strip_2">Activer 2<sup>e</sup> bande LED :</label>
-        <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
-
-        <label for="strip_3">Activer 3<sup>e</sup> bande LED :</label>
-        <input type="checkbox" name="strip_3" id="strip_3" onchange="updateParameter('strip_3', this.checked)">
-        <div class="button-container">
-            <form action="/turn_on" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Allumer les LEDs</button>
-            </form>
-            <form action="/clear" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Eteindre les LEDs</button>
-            </form>
-        </div>
-    </div>
-    </div>
-</body>
-</html>
+            <input type="number" name="num_leds_3" id="num_leds_3" min="1" max="100"
