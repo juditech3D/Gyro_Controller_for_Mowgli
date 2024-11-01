@@ -1,0 +1,17 @@
+# Configuration pour le Gyro Controller for Mowgli
+
+# Adresse IP et port
+network:
+  ip_address: "192.168.1.239"
+  port: 8080
+
+# Type de LED
+led:
+  type: "WS2812"
+  count: 14
+  pin: 18  # GPIO utilisé pour contrôler les LEDs
+
+# Paramètres du gyro
+gyro:
+  sensitivity: 2000  # Sensibilité du gyroscope en degrés par seconde
+  update_rate: 50    # Fréquence de mise à jour en Hz

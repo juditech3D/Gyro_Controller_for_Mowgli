@@ -2,6 +2,22 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from apa102_pi.driver import apa102
 import time
 import threading
+import configparser
+
+# Charger la configuration
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Exemple d'accès aux paramètres depuis config.ini
+led_count = int(config.get('LED Settings', 'led_count'))
+host = config.get('Server Settings', 'host')
+port = int(config.get('Server Settings', 'port'))
+
+# Utilisation des paramètres dans le reste du code
+print(f"LED Count: {led_count}, Server Host: {host}, Server Port: {port}")
+
+# (Le reste de votre code pour le contrôle des LEDs et le serveur ici)
+
 
 app = Flask(__name__)
 
