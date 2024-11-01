@@ -7,9 +7,8 @@ Ce dépôt GitHub héberge le projet Gyro Controller, destiné à la création d
 - Gyrophare à LED personnalisable avec plusieurs effets lumineux
 - Contrôle dynamique des LED en fonction de l'état de la tondeuse
 - Facilement intégrable avec le système OpenMower et Raspberry Pi 4
-- Environ 14 LED WS2812 utilisables
+- Nombre de LED WS2812 utilisables personnalisable (14 dans mon projet pour l'instant)
 
-## Installation
 ## Installation
 Suivez ces étapes pour installer ce dépôt sur votre Raspberry Pi 3 ou 4 via SSH.
 
