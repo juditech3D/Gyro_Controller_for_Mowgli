@@ -2,34 +2,37 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from apa102_pi.driver import apa102
 import time
 import threading
-import configparser
+import yaml
 
 # Charger la configuration
-config = configparser.ConfigParser()
-config.read('config.ini')
+with open('gyro_controller_config.yaml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
 
-# Exemple d'accès aux paramètres depuis config.ini
-led_count = int(config.get('LED Settings', 'led_count'))
-host = config.get('Server Settings', 'host')
-port = int(config.get('Server Settings', 'port'))
+# Exemple d'accès aux paramètres depuis gyro_controller_config.yaml
+led_settings = config['led']
+network_settings = config['network']
+gyro_settings = config['gyro']
+
+led_count = led_settings['count']
+data_pin = led_settings['data_pin']
+clock_pin = led_settings['clock_pin']
+host = network_settings['ip_address']
+port = network_settings['port']
 
 # Utilisation des paramètres dans le reste du code
-print(f"LED Count: {led_count}, Server Host: {host}, Server Port: {port}")
-
-# (Le reste de votre code pour le contrôle des LEDs et le serveur ici)
+print(f"LED Count: {led_count}, Data Pin: {data_pin}, Clock Pin: {clock_pin}, Server Host: {host}, Server Port: {port}")
 
 
 app = Flask(__name__)
 
 # Initialisation des paramètres
-num_leds = 30
 brightness = 10
 color = "#ff0000"
 speed = 50
 effect = "static"
 default_effect = "static"  # Effet par défaut initial
 loop = False
-strip = apa102.APA102(num_led=num_leds, global_brightness=brightness)
+strip = apa102.APA102(num_led=led_count, global_brightness=brightness, mosi=data_pin, sclk=clock_pin)
 
 # Variables pour la gestion de l'effet en cours
 current_thread = None
@@ -66,14 +69,14 @@ def apply_effect():
 # Effets disponibles
 def static_color(r, g, b, brightness):
     strip.global_brightness = brightness
-    for i in range(num_leds):
+    for i in range(led_count):
         strip.set_pixel(i, r, g, b)
     strip.show()
 
 def wipe_effect(r, g, b, brightness, speed):
     strip.global_brightness = brightness
     delay = (101 - speed) / 100
-    for i in range(num_leds):
+    for i in range(led_count):
         if stop_thread:
             break
         strip.set_pixel(i, r, g, b)
@@ -87,24 +90,21 @@ def rainbow_effect(brightness, speed):
     for j in range(256):
         if stop_thread:
             break
-        for i in range(num_leds):
+        for i in range(led_count):
             strip.set_pixel(i, (i * 10 + j) % 255, (i * 5 + j) % 255, (i * 2 + j) % 255)
         strip.show()
         time.sleep(delay)
 
 @app.route('/')
 def index():
-    return render_template('index.html', num_leds=num_leds, effect=effect, default_effect=default_effect, color=color, brightness=brightness, speed=speed, loop=loop)
+    return render_template('index.html', num_leds=led_count, effect=effect, default_effect=default_effect, color=color, brightness=brightness, speed=speed, loop=loop)
 
 @app.route('/update_param', methods=['POST'])
 def update_param():
-    global num_leds, brightness, color, speed, effect, default_effect, loop, current_thread, stop_thread
+    global brightness, color, speed, effect, default_effect, loop, current_thread, stop_thread
     data = request.get_json()
 
     # Mettez à jour chaque paramètre si disponible dans la requête
-    if 'num_leds' in data:
-        num_leds = int(data['num_leds'])
-        strip.num_led = num_leds
     if 'brightness' in data:
         brightness = int(data['brightness'])
     if 'color' in data:
@@ -163,5 +163,4 @@ def clear():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
+    app.run(host=host, port=port, debug=True)
