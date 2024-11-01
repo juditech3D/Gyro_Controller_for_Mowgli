@@ -2,28 +2,98 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contrôle du Bandeau LED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+            font-family: 'Roboto', sans-serif;
+            background: #2c3e50;
+            color: #ecf0f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background 0.5s, color 0.5s;
+        }
+        .container {
+            background: #34495e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            transition: background 0.5s;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-weight: 700;
         }
         label {
             font-weight: bold;
-            margin-right: 5px;
-        }
-        input[type="color"], input[type="number"], input[type="range"], select {
-            margin: 10px 0;
-            text-align: center;
+            margin-top: 15px;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
+        }
+        input[type="color"], input[type="number"], input[type="range"], select, input[type="checkbox"] {
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
         }
         button {
-            margin-top: 10px;
-            padding: 10px 20px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #e74c3c;
+            color: #ecf0f1;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        .btn-clear {
+            background: #3498db;
+        }
+        .btn-clear:hover {
+            background: #2980b9;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #ecf0f1;
+            transition: color 0.5s;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+            .theme-toggle {
+                font-size: 20px;
+            }
+        }
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            label, input, select, button {
+                font-size: 14px;
+            }
         }
     </style>
     <script>
@@ -64,46 +134,64 @@
             const speed = document.getElementById('speed').value;
             updateParameter('speed', speed);
         }
+
+        function toggleTheme() {
+            const body = document.body;
+            const container = document.querySelector('.container');
+            const themeToggleBtn = document.querySelector('.theme-toggle');
+
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                container.classList.remove('light-theme');
+                themeToggleBtn.innerHTML = '🌙';
+            } else {
+                body.classList.add('light-theme');
+                container.classList.add('light-theme');
+                themeToggleBtn.innerHTML = '☀️';
+            }
+        }
     </script>
 </head>
 <body>
-    <h1>Contrôle du Bandeau LED</h1>
-    <form action="/turn_on" method="post">
-        <label for="num_leds">Nombre de LEDs :</label>
-        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <div class="container">
+        <h1>Contrôle du Bandeau LED</h1>
+        <form action="/turn_on" method="post">
+            <label for="num_leds">Nombre de LEDs :</label>
+            <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
 
-        <label for="effect">Effet :</label>
-        <select name="effect" id="effect" onchange="updateEffect()">
-            <option value="static" {% if effect == "static" %}selected{% endif %}>Couleur Statique</option>
-            <option value="wipe" {% if effect == "wipe" %}selected{% endif %}>Balayage</option>
-            <option value="rainbow" {% if effect == "rainbow" %}selected{% endif %}>Arc-en-ciel</option>
-        </select>
-        
-        <label for="default_effect">Effet par Défaut :</label>
-        <select name="default_effect" id="default_effect" onchange="updateDefaultEffect()">
-            <option value="static" {% if default_effect == "static" %}selected{% endif %}>Couleur Statique</option>
-            <option value="wipe" {% if default_effect == "wipe" %}selected{% endif %}>Balayage</option>
-            <option value="rainbow" {% if default_effect == "rainbow" %}selected{% endif %}>Arc-en-ciel</option>
-        </select>
+            <label for="effect">Effet :</label>
+            <select name="effect" id="effect" onchange="updateEffect()">
+                <option value="static" {% if effect == "static" %}selected{% endif %}>Couleur Statique</option>
+                <option value="wipe" {% if effect == "wipe" %}selected{% endif %}>Balayage</option>
+                <option value="rainbow" {% if effect == "rainbow" %}selected{% endif %}>Arc-en-ciel</option>
+            </select>
+            
+            <label for="default_effect">Effet par Défaut :</label>
+            <select name="default_effect" id="default_effect" onchange="updateDefaultEffect()">
+                <option value="static" {% if default_effect == "static" %}selected{% endif %}>Couleur Statique</option>
+                <option value="wipe" {% if default_effect == "wipe" %}selected{% endif %}>Balayage</option>
+                <option value="rainbow" {% if default_effect == "rainbow" %}selected{% endif %}>Arc-en-ciel</option>
+            </select>
 
-        <label for="color">Couleur :</label>
-        <input type="color" name="color" id="color" value="{{ color }}" onchange="updateColor()">
-        
-        <label for="brightness">Luminosité :</label>
-        <input type="range" name="brightness" id="brightness" min="1" max="31" value="{{ brightness }}" onchange="updateBrightness()">
-        
-        <label for="speed">Vitesse :</label>
-        <input type="range" name="speed" id="speed" min="50" max="100" value="{{ speed }}" onchange="updateSpeed()">
-        
-        <label for="loop">Boucle :</label>
-        <input type="checkbox" name="loop" id="loop" {% if loop %}checked{% endif %} onchange="updateParameter('loop', this.checked)">
-        
-        <button type="submit">Allumer les LEDs</button>
-    </form>
-    <br>
-    <form action="/clear" method="post">
-        <button type="submit">Éteindre les LEDs</button>
-    </form>
+            <label for="color">Couleur :</label>
+            <input type="color" name="color" id="color" value="{{ color }}" onchange="updateColor()">
+            
+            <label for="brightness">Luminosité :</label>
+            <input type="range" name="brightness" id="brightness" min="1" max="31" value="{{ brightness }}" onchange="updateBrightness()">
+            
+            <label for="speed">Vitesse :</label>
+            <input type="range" name="speed" id="speed" min="50" max="100" value="{{ speed }}" onchange="updateSpeed()">
+            
+            <label for="loop">Boucle :</label>
+            <input type="checkbox" name="loop" id="loop" {% if loop %}checked{% endif %} onchange="updateParameter('loop', this.checked)">
+            
+            <button type="submit">Allumer les LEDs</button>
+        </form>
+        <br>
+        <form action="/clear" method="post">
+            <button type="submit" class="btn-clear">Eteindre les LEDs</button>
+        </form>
+    </div>
 </body>
 </html>
-
