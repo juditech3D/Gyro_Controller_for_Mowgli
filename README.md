@@ -16,10 +16,12 @@ Ce dépôt GitHub héberge le projet Gyro Controller, destiné à la création d
 ## Utilisation
 - Personnalisez les effets lumineux en modifiant le fichier `effects_config.json`.
 - Lancez le script principal pour activer le gyrophare.
-a round orange button with a black power symbol in the center. the button has a gradient effect, with the top half being a darker orange and the bottom half being a lighter shade of orange. the power symbol is centered in the middle of the button, with no edges or curves. the overall design is simple and modern, conveying a sense of energy or technology.
 
 ## Contribution
 Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou ouvrir une issue pour discuter des changements proposés.
 
 ## Licence
 Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## Avertissement
+**Attention :** Ce projet est actuellement en version bêta. Il est encore en développement actif, et son fonctionnement peut être instable. Utilisez-le avec prudence et soyez conscients des risques potentiels.
