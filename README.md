@@ -15,6 +15,7 @@ Suivez ces étapes pour installer ce dépôt sur votre Raspberry Pi 3 ou 4 via S
 ### Prérequis
 - Un Raspberry Pi 3 ou 4 avec Raspbian installé et connecté au réseau.
 - Un ordinateur avec un client SSH (comme Terminal sur macOS ou PuTTY sur Windows).
+- Un robot tondeuse avec mowgli et openmower.
 
 ### Étape 1 : Connexion au Raspberry Pi
 1. Trouvez l'adresse IP de votre Raspberry Pi.
