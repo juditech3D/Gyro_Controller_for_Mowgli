@@ -21,7 +21,7 @@ clock_pin = pins['clock_pin']
 
 # Charger la configuration pour chaque bande
 bands = []
-for band_file in glob.glob("band_configs/band_*_config.yaml"):
+for band_file in sorted(glob.glob("band_configs/band_*_config.yaml")):
     with open(band_file, 'r') as f:
         band_config = yaml.safe_load(f)
         bands.append(band_config['band'])
