@@ -1,6 +1,6 @@
 # band_3_config.yaml
 band:
-  count: 20
+  count: 4
   default_effect: "rainbow"
   default_color: "#0000ff"
   brightness: 20
