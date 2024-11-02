@@ -107,7 +107,7 @@ def turn_on_band(band_index):
     current_threads[band_index].start()
     return redirect(url_for('index'))
 
-# Route pour éteindre toutes les LEDs
+# Route pour éteindre une bande individuelle
 @app.route('/clear_band/<int:band_index>', methods=['POST'])
 def clear_band(band_index):
     stop_threads[band_index] = True
@@ -116,3 +116,32 @@ def clear_band(band_index):
     strips[band_index].clear_strip()
     strips[band_index].show()
     return redirect(url_for('index'))
+
+# Route pour allumer toutes les bandes
+@app.route('/turn_on', methods=['POST'])
+def turn_on():
+    for i, band in enumerate(bands):
+        if not band_states[i]:  # Vérifie si la bande est activée
+            continue
+        effect_name = band['default_effect']
+        if current_threads[i] is not None and current_threads[i].is_alive():
+            stop_threads[i] = True
+            current_threads[i].join()
+        current_threads[i] = threading.Thread(target=apply_effect, args=(i, effect_name))
+        current_threads[i].start()
+    return redirect(url_for('index'))
+
+# Route pour éteindre toutes les bandes
+@app.route('/clear', methods=['POST'])
+def clear():
+    for i in range(len(bands)):
+        stop_threads[i] = True
+        if current_threads[i] is not None and current_threads[i].is_alive():
+            current_threads[i].join()
+        strips[i].clear_strip()
+        strips[i].show()
+    return redirect(url_for('index'))
+
+# Lancer le serveur Flask
+if __name__ == '__main__':
+    app.run(host=host, port=port, debug=True)
