@@ -45,9 +45,12 @@ def hex_to_rgb(hex_color):
 # Variables pour la gestion de l'effet en cours
 current_threads = [None] * len(bands)
 stop_threads = [False] * len(bands)
+band_states = [True] * len(bands)  # Par défaut, toutes les bandes sont activées
 
 # Fonction pour appliquer un effet spécifique sur une bande
 def apply_effect(band_index, effect_name):
+    if not band_states[band_index]:
+        return
     effect_params = effects.get(effect_name, {})
     strip = strips[band_index]
     stop_threads[band_index] = False
@@ -85,10 +88,20 @@ def apply_effect(band_index, effect_name):
 def index():
     return render_template('index.html', bands=bands, effects=effects, interface_settings=interface_settings)
 
-# Route pour allumer les LEDs avec l'effet par défaut de chaque bande
+# Route pour mettre à jour les états des bandes (activées ou non)
+@app.route('/set_band_states', methods=['POST'])
+def set_band_states():
+    global band_states
+    data = request.get_json()
+    band_states = [data.get(f"activate_band_{i}", True) for i in range(len(bands))]
+    return jsonify(success=True)
+
+# Route pour allumer les LEDs avec l'effet par défaut de chaque bande activée
 @app.route('/turn_on', methods=['POST'])
 def turn_on():
     for i, band in enumerate(bands):
+        if not band_states[i]:  # Vérifie si la bande est activée
+            continue
         effect_name = band['default_effect']
         if current_threads[i] is not None and current_threads[i].is_alive():
             stop_threads[i] = True
