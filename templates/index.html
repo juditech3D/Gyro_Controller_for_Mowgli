@@ -68,6 +68,11 @@
 
         {% for band in bands %}
         <div class="led-section">
+            <label>
+                <input type="checkbox" id="activate_band_{{ loop.index }}" name="activate_band_{{ loop.index }}" checked>
+                Activer Bande {{ loop.index }}
+            </label>
+
             <label for="num_leds_{{ loop.index }}">Nombre de LEDs (Bande {{ loop.index }}) :</label>
             <input type="number" id="num_leds_{{ loop.index }}" value="{{ band.count }}" disabled>
 
@@ -90,5 +95,25 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function collectBandStates() {
+            const bandStates = {};
+            {% for band in bands %}
+                bandStates["activate_band_{{ loop.index }}"] = document.getElementById("activate_band_{{ loop.index }}").checked;
+            {% endfor %}
+            return bandStates;
+        }
+
+        document.querySelector('form[action="/turn_on"]').onsubmit = function() {
+            const bandStates = collectBandStates();
+            fetch('/set_band_states', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bandStates)
+            });
+            return true;
+        };
+    </script>
 </body>
 </html>
