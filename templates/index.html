@@ -4,253 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gyro Mowgli</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background: #2c3e50;
-            color: #ecf0f1;
+            background-color: {{ interface_settings['background_color'] }};
+            color: {{ interface_settings['text_color'] }};
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            transition: background 0.5s, color 0.5s;
-        }
-        .light-theme {
-            background: #ecf0f1;
-            color: #2c3e50;
+            text-align: center;
+            flex-direction: column;
         }
         .container {
-            background: #34495e;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background: {{ interface_settings['section_color'] }};
+            padding: 20px;
+            border-radius: 10px;
             width: 90%;
             max-width: 600px;
-            transition: background 0.5s;
-        }
-        .light-theme .container {
-            background: #ffffff;
+            box-sizing: border-box;
         }
         h1 {
             margin-bottom: 20px;
-            font-weight: 700;
+        }
+        .led-section {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: {{ interface_settings['section_color'] }};
         }
         label {
-            font-weight: bold;
-            margin-top: 15px;
             display: block;
-        }
-        input[type="color"], input[type="number"], input[type="range"], select, input[type="checkbox"] {
             margin: 10px 0;
-            display: block;
+            font-weight: bold;
+        }
+        input, select, button {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
+            margin-bottom: 10px;
             border: none;
             border-radius: 5px;
         }
         button {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e74c3c;
-            color: #ecf0f1;
-            border: none;
-            border-radius: 5px;
+            background-color: {{ interface_settings['button_color'] }};
+            color: {{ interface_settings['text_color'] }};
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
-            width: 48%;
-            margin-right: 2%;
-        }
-        .light-theme button {
-            background: #e74c3c;
-            color: #ffffff;
         }
         button:hover {
-            background: #c0392b;
+            background-color: {{ interface_settings['button_hover_color'] }};
         }
-        .btn-action {
-            background: #3498db;
-        }
-        .btn-clear:hover {
-            background: #2980b9;
-        }
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
+        input[type="color"] {
+            width: 50px;
+            height: 30px;
+            padding: 0;
             border: none;
-            cursor: pointer;
-            font-size: 24px;
-            color: #ecf0f1;
-            transition: color 0.5s;
-        }
-        .light-theme .theme-toggle {
-            color: #2c3e50;
-        }
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-                width: 95%;
-            }
-            button {
-                padding: 10px;
-                font-size: 14px;
-            }
-            .theme-toggle {
-                font-size: 20px;
-            }
-        }
-        @media (max-width: 400px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            label, input, select, button {
-                font-size: 14px;
-            }
-        }
-        .color-picker {
-            width: 100%;
-            height: 150px;
-            border: none;
-            cursor: pointer;
         }
     </style>
-    <script>
-        function updateParameter(param, value) {
-            fetch(`/update_param`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ [param]: value })
-            });
-        }
-
-        function updateColor() {
-            const color = document.getElementById('color').value;
-            updateParameter('color', color);
-        }
-
-        function updateEffect() {
-            const effect = document.getElementById('effect').value;
-            updateParameter('effect', effect);
-        }
-
-        function updateDefaultEffect() {
-            const defaultEffect = document.getElementById('default_effect').value;
-            updateParameter('default_effect', defaultEffect);
-        }
-
-        function updateNumLeds() {
-            const num_leds = document.getElementById('num_leds').value;
-            updateParameter('num_leds', num_leds);
-        }
-
-        function updateBrightness() {
-            const brightness = document.getElementById('brightness').value;
-            updateParameter('brightness', brightness);
-        }
-
-        function updateSpeed() {
-            const speed = document.getElementById('speed').value;
-            updateParameter('speed', speed);
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const themeToggleBtn = document.querySelector('.theme-toggle');
-
-            if (body.classList.contains('light-theme')) {
-                body.classList.remove('light-theme');
-                themeToggleBtn.innerHTML = '🌙';
-            } else {
-                body.classList.add('light-theme');
-                themeToggleBtn.innerHTML = '☀️';
-            }
-        }
-
-        document.getElementById('strip_2').addEventListener('change', function() {
-            const strip2Settings = document.getElementById('strip_2_settings');
-            strip2Settings.style.display = this.checked ? 'block' : 'none';
-        });
-
-        document.getElementById('strip_3').addEventListener('change', function() {
-            const strip3Settings = document.getElementById('strip_3_settings');
-            strip3Settings.style.display = this.checked ? 'block' : 'none';
-        });
-
-        document.getElementById('strip_4').addEventListener('change', function() {
-            const strip4Settings = document.getElementById('strip_4_settings');
-            strip4Settings.style.display = this.checked ? 'block' : 'none';
-        });
-
-        function updateBatteryLevel(level) {
-            const strip2 = document.getElementById('strip_2');
-            if (strip2.checked) {
-                let color;
-                if (level > 50) {
-                    color = '#00FF00'; // Vert
-                } else if (level > 20) {
-                    color = '#FFFF00'; // Jaune
-                } else {
-                    color = '#FF0000'; // Rouge
-                }
-                updateParameter('battery_color', color);
-            }
-        }
-
-        // Simulation du niveau de batterie (pour test uniquement)
-        setInterval(function() {
-            const simulatedLevel = Math.floor(Math.random() * 100);
-            updateBatteryLevel(simulatedLevel);
-            updateBatteryVisual(simulatedLevel);
-        }, 5000);
-
-        function updateBatteryVisual(level) {
-            const batteryVisual = document.getElementById('battery_visual');
-            if (level > 50) {
-                batteryVisual.style.backgroundColor = '#00FF00';
-            } else if (level > 20) {
-                batteryVisual.style.backgroundColor = '#FFFF00';
-            } else {
-                batteryVisual.style.backgroundColor = '#FF0000';
-            }
-        }
-
-        function updateGPSVisual() {
-            const gpsColor = document.getElementById('gps_color').value;
-            const gpsVisual = document.getElementById('gps_visual');
-            gpsVisual.style.backgroundColor = gpsColor;
-        }
-
-        function updateWiFiVisual() {
-            const wifiColor = document.getElementById('wifi_color').value;
-            const wifiVisual = document.getElementById('wifi_visual');
-            wifiVisual.style.backgroundColor = wifiColor;
-        }
-
-        document.getElementById('gps_color').addEventListener('input', updateGPSVisual);
-        document.getElementById('wifi_color').addEventListener('input', updateWiFiVisual);
-    </script>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     <div class="container">
         <h1>Gyro Mowgli</h1>
-        <label for="num_leds">Nombre de LEDs (Bande 1) :</label>
-        <input type="number" name="num_leds" id="num_leds" min="1" max="100" value="{{ num_leds }}" onchange="updateNumLeds()">
-
-        <label for="strip_2">Activer 2<sup>e</sup> bande LED (Indication Batterie - Vert/Jaune/Rouge) :</label>
-        <input type="checkbox" name="strip_2" id="strip_2" onchange="updateParameter('strip_2', this.checked)">
-        <div id="strip_2_settings" style="display: none;">
-            <label for="num_leds_2">Nombre de LEDs (Bande 2) :</label>
-            <input type="number" name="num_leds_2" id="num_leds_2" min="1" max="100" value="{{ num_leds_2 }}" onchange="updateParameter('num_leds_2', this.value)">
-            <div class="led-visual" id="battery_visual" style="width: 100%; height: 20px; background-color: #00FF00;"></div>
+        
+        <!-- Bande LED 1 -->
+        <div class="led-section">
+            <label for="num_leds_1">Nombre de LEDs (Bande 1) :</label>
+            <input type="number" id="num_leds_1" min="1" max="100" value="30">
+            <label for="effect_1">Effet pour Bande 1 :</label>
+            <select id="effect_1">
+                <option value="static">Couleur Statique</option>
+                <option value="wipe">Balayage</option>
+                <option value="rainbow">Arc-en-ciel</option>
+            </select>
+            <label for="color_1">Couleur :</label>
+            <input type="color" id="color_1" value="#ff0000">
         </div>
 
-        <label for="strip_3">Activer 3<sup>e</sup> bande LED (Réception GPS) :</label>
-        <input type="checkbox" name="strip_3" id="strip_3" onchange="updateParameter('strip_3', this.checked)">
-        <div id="strip_3_settings" style="display: none;">
-            <label for="num_leds_3">Nombre de LEDs (Bande 3) :</label>
-            <input type="number" name="num_leds_3" id="num_leds_3" min="1" max="100"
+        <!-- Autres bandes LED... -->
+
+        <!-- Boutons -->
+        <button>Allumer les LEDs</button>
+        <button>Éteindre les LEDs</button>
+    </div>
+</body>
+</html>
