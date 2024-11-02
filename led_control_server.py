@@ -97,29 +97,22 @@ def set_band_states():
     return jsonify(success=True)
 
 # Route pour allumer les LEDs avec l'effet par défaut de chaque bande activée
-@app.route('/turn_on', methods=['POST'])
-def turn_on():
-    for i, band in enumerate(bands):
-        if not band_states[i]:  # Vérifie si la bande est activée
-            continue
-        effect_name = band['default_effect']
-        if current_threads[i] is not None and current_threads[i].is_alive():
-            stop_threads[i] = True
-            current_threads[i].join()
-        current_threads[i] = threading.Thread(target=apply_effect, args=(i, effect_name))
-        current_threads[i].start()
+@app.route('/turn_on_band/<int:band_index>', methods=['POST'])
+def turn_on_band(band_index):
+    effect_name = bands[band_index]['default_effect']
+    if current_threads[band_index] is not None and current_threads[band_index].is_alive():
+        stop_threads[band_index] = True
+        current_threads[band_index].join()
+    current_threads[band_index] = threading.Thread(target=apply_effect, args=(band_index, effect_name))
+    current_threads[band_index].start()
     return redirect(url_for('index'))
 
 # Route pour éteindre toutes les LEDs
-@app.route('/clear', methods=['POST'])
-def clear():
-    for i in range(len(bands)):
-        stop_threads[i] = True
-        if current_threads[i] is not None and current_threads[i].is_alive():
-            current_threads[i].join()
-        strips[i].clear_strip()
-        strips[i].show()
+@app.route('/clear_band/<int:band_index>', methods=['POST'])
+def clear_band(band_index):
+    stop_threads[band_index] = True
+    if current_threads[band_index] is not None and current_threads[band_index].is_alive():
+        current_threads[band_index].join()
+    strips[band_index].clear_strip()
+    strips[band_index].show()
     return redirect(url_for('index'))
-
-if __name__ == '__main__':
-    app.run(host=host, port=port, debug=True)
