@@ -80,10 +80,15 @@
         </div>
         {% endfor %}
 
-        <!-- Boutons -->
-        <button>Allumer les LEDs</button>
-        <button>Éteindre les LEDs</button>
+        <!-- Boutons pour allumer et éteindre les LEDs -->
+        <div class="button-container" style="text-align: center;">
+            <form action="/turn_on" method="post" style="display: inline-block;">
+                <button type="submit" class="btn-action">Allumer les LEDs</button>
+            </form>
+            <form action="/clear" method="post" style="display: inline-block;">
+                <button type="submit" class="btn-action">Éteindre les LEDs</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
-
