@@ -69,7 +69,7 @@
         {% for band in bands %}
         <div class="led-section">
             <label>
-                <input type="checkbox" id="activate_band_{{ loop.index }}" name="activate_band_{{ loop.index }}" checked>
+                <input type="checkbox" id="activate_band_{{ loop.index }}" name="activate_band_{{ loop.index }}" {% if loop.index == 1 %}checked{% endif %}>
                 Activer Bande {{ loop.index }}
             </label>
 
@@ -82,16 +82,24 @@
                     <option value="{{ effect }}">{{ effect }}</option>
                 {% endfor %}
             </select>
+
+            <!-- Boutons pour allumer et éteindre chaque bande individuellement -->
+            <form action="/turn_on_band/{{ loop.index }}" method="post" style="display: inline-block;">
+                <button type="submit" class="btn-action">Allumer Bande {{ loop.index }}</button>
+            </form>
+            <form action="/clear_band/{{ loop.index }}" method="post" style="display: inline-block;">
+                <button type="submit" class="btn-action">Éteindre Bande {{ loop.index }}</button>
+            </form>
         </div>
         {% endfor %}
 
-        <!-- Boutons pour allumer et éteindre les LEDs -->
+        <!-- Boutons globaux pour allumer et éteindre toutes les LEDs -->
         <div class="button-container" style="text-align: center;">
             <form action="/turn_on" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Allumer les LEDs</button>
+                <button type="submit" class="btn-action">Allumer toutes les LEDs</button>
             </form>
             <form action="/clear" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Éteindre les LEDs</button>
+                <button type="submit" class="btn-action">Éteindre toutes les LEDs</button>
             </form>
         </div>
     </div>

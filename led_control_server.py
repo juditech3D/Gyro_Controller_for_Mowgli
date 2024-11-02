@@ -45,7 +45,7 @@ def hex_to_rgb(hex_color):
 # Variables pour la gestion de l'effet en cours
 current_threads = [None] * len(bands)
 stop_threads = [False] * len(bands)
-band_states = [True] * len(bands)  # Par défaut, toutes les bandes sont activées
+band_states = [True] + [False] * (len(bands) - 1)  # Seule la bande 1 (index 0) est activée par défaut
 
 # Fonction pour appliquer un effet spécifique sur une bande
 def apply_effect(band_index, effect_name):
