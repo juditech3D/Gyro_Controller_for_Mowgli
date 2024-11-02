@@ -1,0 +1,6 @@
+# effect_static.yaml
+effect:
+  name: "static"
+  parameters:
+    color: "#ff0000"
+    brightness: 10

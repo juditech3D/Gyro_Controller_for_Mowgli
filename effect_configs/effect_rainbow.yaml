@@ -1,0 +1,6 @@
+# effect_rainbow.yaml
+effect:
+  name: "rainbow"
+  parameters:
+    speed: 50
+    brightness: 25

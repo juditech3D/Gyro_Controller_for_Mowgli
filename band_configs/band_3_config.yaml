@@ -1,0 +1,7 @@
+# band_3_config.yaml
+band:
+  count: 20
+  default_effect: "rainbow"
+  default_color: "#0000ff"
+  brightness: 20
+  speed: 30

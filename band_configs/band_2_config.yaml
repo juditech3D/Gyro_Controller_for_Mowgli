@@ -1,0 +1,7 @@
+# band_2_config.yaml
+band:
+  count: 20
+  default_effect: "wipe"
+  default_color: "#00ff00"
+  brightness: 15
+  speed: 40

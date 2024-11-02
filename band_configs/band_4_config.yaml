@@ -1,0 +1,7 @@
+# band_4_config.yaml
+band:
+  count: 10
+  default_effect: "static"
+  default_color: "#ff00ff"
+  brightness: 25
+  speed: 60

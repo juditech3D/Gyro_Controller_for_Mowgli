@@ -1,0 +1,7 @@
+# effect_wipe.yaml
+effect:
+  name: "wipe"
+  parameters:
+    color: "#00ff00"
+    speed: 50
+    brightness: 20

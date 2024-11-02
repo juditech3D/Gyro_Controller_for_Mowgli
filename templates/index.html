@@ -65,22 +65,20 @@
 <body>
     <div class="container">
         <h1>Gyro Mowgli</h1>
-        
-        <!-- Bande LED 1 -->
-        <div class="led-section">
-            <label for="num_leds_1">Nombre de LEDs (Bande 1) :</label>
-            <input type="number" id="num_leds_1" min="1" max="100" value="30">
-            <label for="effect_1">Effet pour Bande 1 :</label>
-            <select id="effect_1">
-                <option value="static">Couleur Statique</option>
-                <option value="wipe">Balayage</option>
-                <option value="rainbow">Arc-en-ciel</option>
-            </select>
-            <label for="color_1">Couleur :</label>
-            <input type="color" id="color_1" value="#ff0000">
-        </div>
 
-        <!-- Autres bandes LED... -->
+        {% for band in bands %}
+        <div class="led-section">
+            <label for="num_leds_{{ loop.index }}">Nombre de LEDs (Bande {{ loop.index }}) :</label>
+            <input type="number" id="num_leds_{{ loop.index }}" value="{{ band.count }}" disabled>
+
+            <label for="effect_{{ loop.index }}">Effet pour Bande {{ loop.index }} :</label>
+            <select id="effect_{{ loop.index }}">
+                {% for effect in effects %}
+                    <option value="{{ effect }}">{{ effect }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endfor %}
 
         <!-- Boutons -->
         <button>Allumer les LEDs</button>
@@ -88,3 +86,4 @@
     </div>
 </body>
 </html>
+
