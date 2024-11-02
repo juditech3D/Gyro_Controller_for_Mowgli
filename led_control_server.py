@@ -31,7 +31,7 @@ strips = [apa102.APA102(num_led=band['count'], global_brightness=band['brightnes
 
 # Charger la configuration pour chaque effet
 effects = {}
-for effect_file in glob.glob("effect_configs/effect_*.yaml"):
+for effect_file in sorted(glob.glob("effect_configs/effect_*.yaml")):
     with open(effect_file, 'r') as f:
         effect_config = yaml.safe_load(f)
         effect_name = effect_config['effect']['name']
@@ -42,36 +42,71 @@ def hex_to_rgb(hex_color):
     hex_color = hex_color.lstrip('#')
     return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
-# Fonction pour appliquer les effets en fonction de la configuration
+# Variables pour la gestion de l'effet en cours
+current_threads = [None] * len(bands)
+stop_threads = [False] * len(bands)
+
+# Fonction pour appliquer un effet spécifique sur une bande
 def apply_effect(band_index, effect_name):
     effect_params = effects.get(effect_name, {})
     strip = strips[band_index]
+    stop_threads[band_index] = False
+
     if effect_name == "static":
         r, g, b = hex_to_rgb(effect_params.get("color", "#ffffff"))
-        for i in range(bands[band_index]['count']):
-            strip.set_pixel(i, r, g, b)
-        strip.show()
+        while not stop_threads[band_index]:
+            for i in range(bands[band_index]['count']):
+                strip.set_pixel(i, r, g, b)
+            strip.show()
+            time.sleep(0.1)
+
     elif effect_name == "wipe":
         r, g, b = hex_to_rgb(effect_params.get("color", "#ffffff"))
         speed = effect_params.get("speed", 50)
-        for i in range(bands[band_index]['count']):
-            strip.set_pixel(i, r, g, b)
+        while not stop_threads[band_index]:
+            for i in range(bands[band_index]['count']):
+                strip.set_pixel(i, r, g, b)
+                strip.show()
+                time.sleep((101 - speed) / 100)
+                strip.set_pixel(i, 0, 0, 0)
             strip.show()
-            time.sleep((101 - speed) / 100)
-            strip.set_pixel(i, 0, 0, 0)
-        strip.show()
+
     elif effect_name == "rainbow":
         speed = effect_params.get("speed", 50)
-        for j in range(256):
-            for i in range(bands[band_index]['count']):
-                strip.set_pixel(i, (i * 10 + j) % 255, (i * 5 + j) % 255, (i * 2 + j) % 255)
-            strip.show()
-            time.sleep((101 - speed) / 100)
+        while not stop_threads[band_index]:
+            for j in range(256):
+                for i in range(bands[band_index]['count']):
+                    strip.set_pixel(i, (i * 10 + j) % 255, (i * 5 + j) % 255, (i * 2 + j) % 255)
+                strip.show()
+                time.sleep((101 - speed) / 100)
 
-# Routes Flask
+# Route pour afficher la page principale
 @app.route('/')
 def index():
     return render_template('index.html', bands=bands, effects=effects, interface_settings=interface_settings)
+
+# Route pour allumer les LEDs avec l'effet par défaut de chaque bande
+@app.route('/turn_on', methods=['POST'])
+def turn_on():
+    for i, band in enumerate(bands):
+        effect_name = band['default_effect']
+        if current_threads[i] is not None and current_threads[i].is_alive():
+            stop_threads[i] = True
+            current_threads[i].join()
+        current_threads[i] = threading.Thread(target=apply_effect, args=(i, effect_name))
+        current_threads[i].start()
+    return redirect(url_for('index'))
+
+# Route pour éteindre toutes les LEDs
+@app.route('/clear', methods=['POST'])
+def clear():
+    for i in range(len(bands)):
+        stop_threads[i] = True
+        if current_threads[i] is not None and current_threads[i].is_alive():
+            current_threads[i].join()
+        strips[i].clear_strip()
+        strips[i].show()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(host=host, port=port, debug=True)
