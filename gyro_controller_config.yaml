@@ -1,21 +1,13 @@
-# Configuration pour le Gyro Controller for Mowgli
+# gyro_controller_config.yaml
 
-# Adresse IP et port
 network:
   ip_address: "0.0.0.0"
   port: 5000
 
-# Type de LED
-led:
-  type: "APA102"
-  count: 14
-  data_pin: 18  # GPIO utilisé pour la donnée
-  clock_pin: 23  # GPIO utilisé pour l'horloge
-
-# Paramètres du gyro
-gyro:
-  sensitivity: 2000  # Sensibilité du gyroscope en degrés par seconde
-  update_rate: 50    # Fréquence de mise à jour en Hz
+# Pins pour le contrôle du bandeau LED
+pins:
+  data_pin: 18
+  clock_pin: 23
 
 # Couleurs de l'interface
 interface:
