@@ -16,3 +16,11 @@ led:
 gyro:
   sensitivity: 2000  # Sensibilité du gyroscope en degrés par seconde
   update_rate: 50    # Fréquence de mise à jour en Hz
+
+# Couleurs de l'interface
+interface:
+  background_color: "#2c3e50"
+  section_color: "#3b5998"
+  text_color: "#ecf0f1"
+  button_color: "#3498db"
+  button_hover_color: "#2980b9"
