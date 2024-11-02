@@ -1,6 +1,6 @@
 # band_1_config.yaml
 band:
-  count: 30
+  count: 14
   default_effect: "static"
   default_color: "#ff0000"
   brightness: 10
