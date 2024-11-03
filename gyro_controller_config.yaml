@@ -9,6 +9,9 @@ pins:
   data_pin: 18
   clock_pin: 23
 
+led:
+  led_count: 14          # Nombre de LEDs sur la bande
+
 # Couleurs de l'interface
 interface:
   background_color: "#2c3e50"

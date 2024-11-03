@@ -11,14 +11,15 @@ with open('gyro_controller_config.yaml', 'r') as config_file:
     config = yaml.safe_load(config_file)
 network_settings = config['network']
 pins = config['pins']
+led_settings = config['led']
 
 host = network_settings['ip_address']
 port = network_settings['port']
 data_pin = pins['data_pin']
 clock_pin = pins['clock_pin']
+led_count = led_settings['led_count']  # Nombre de LEDs défini dans la configuration
 
 # Paramètres pour une seule bande
-led_count = 14  # Exemple de valeur
 brightness = max(0, min(31, 15))  # Valeur de luminosité initiale, limitée à 0-31
 color = "#ff0000"
 speed = 50
@@ -76,38 +77,23 @@ def index():
 # Route pour mettre à jour les paramètres
 @app.route('/update_param', methods=['POST'])
 def update_param():
-    global effect, color, brightness, speed
+    global effect, color, brightness, speed, current_thread, stop_thread
     data = request.get_json()
 
+    # Mettre à jour les paramètres
     effect = data.get("effect", effect)
     color = data.get("color", color)
     brightness = max(0, min(31, int(data.get("brightness", brightness))))  # Limiter à la plage 0-31
     speed = int(data.get("speed", speed))
 
-    return jsonify(success=True)
-
-# Route pour allumer la bande
-@app.route('/turn_on', methods=['POST'])
-def turn_on():
-    global current_thread, stop_thread
-    if current_thread is not None and current_thread.is_alive():
-        stop_thread = True
-        current_thread.join()
-
-    current_thread = threading.Thread(target=apply_effect)
-    current_thread.start()
-    return jsonify(success=True)
-
-# Route pour éteindre la bande
-@app.route('/clear', methods=['POST'])
-def clear():
-    global stop_thread, current_thread
+    # Redémarrer l'effet avec les nouveaux paramètres
     stop_thread = True
     if current_thread is not None and current_thread.is_alive():
         current_thread.join()
 
-    strip.clear_strip()
-    strip.show()
+    current_thread = threading.Thread(target=apply_effect)
+    current_thread.start()
+
     return jsonify(success=True)
 
 # Lancer le serveur
