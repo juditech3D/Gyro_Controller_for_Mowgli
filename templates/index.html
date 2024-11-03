@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gyro Mowgli</title>
+    <title>Gyro Mowgli - Contrôle LED</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: {{ interface_settings['background_color'] }};
-            color: {{ interface_settings['text_color'] }};
+            background-color: #2c3e50;
+            color: #ecf0f1;
             font-family: 'Roboto', sans-serif;
             display: flex;
             justify-content: center;
@@ -19,124 +19,97 @@
             flex-direction: column;
         }
         .container {
-            background-color: {{ interface_settings['section_color'] }};
+            background-color: #34495e;
             padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 800px;
+            max-width: 600px;
             box-sizing: border-box;
-        }
-        h1 {
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        .led-section {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background-color: {{ interface_settings['section_color'] }};
         }
         label {
             font-weight: bold;
-            margin: 10px 0;
             display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
         }
         input, select, button {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-bottom: 10px;
             border: none;
             border-radius: 5px;
+            box-sizing: border-box;
         }
         button {
-            background-color: {{ interface_settings['button_color'] }};
-            color: {{ interface_settings['text_color'] }};
+            background-color: #3498db;
+            color: #ecf0f1;
             cursor: pointer;
         }
         button:hover {
-            background-color: {{ interface_settings['button_hover_color'] }};
-        }
-        .active-effect {
-            font-style: italic;
-            color: #888;
-            margin-bottom: 10px;
+            background-color: #2980b9;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Gyro Mowgli</h1>
+        <h1>Contrôle LED</h1>
 
-        {% for band in bands %}
-        <div class="led-section">
-            <label>
-                <input type="checkbox" id="activate_band_{{ loop.index0 }}" name="activate_band_{{ loop.index0 }}" {% if loop.index == 1 %}checked{% endif %}>
-                Activer Bande {{ loop.index }}
-            </label>
+        <label for="effect">Effet</label>
+        <select id="effect" onchange="updateEffect()">
+            <option value="static">Couleur Statique</option>
+            <option value="wipe">Balayage</option>
+            <option value="rainbow">Arc-en-ciel</option>
+        </select>
 
-            <label for="num_leds_{{ loop.index0 }}">Nombre de LEDs (Bande {{ loop.index }}) :</label>
-            <input type="number" id="num_leds_{{ loop.index0 }}" value="{{ band.count }}" disabled>
+        <label for="color">Couleur</label>
+        <input type="color" id="color" value="#ff0000" onchange="updateColor()">
 
-            <label>Effet Actif : <span id="active_effect_{{ loop.index0 }}" class="active-effect">{{ band.default_effect }}</span></label>
+        <label for="brightness">Luminosité</label>
+        <input type="range" id="brightness" min="1" max="100" value="50" onchange="updateBrightness()">
 
-            <label for="effect_{{ loop.index0 }}">Sélectionner un Effet :</label>
-            <select id="effect_{{ loop.index0 }}">
-                {% for effect in effects %}
-                    <option value="{{ effect }}" {% if effect == band.default_effect %}selected{% endif %}>{{ effect }}</option>
-                {% endfor %}
-            </select>
+        <label for="speed">Vitesse</label>
+        <input type="range" id="speed" min="1" max="100" value="50" onchange="updateSpeed()">
 
-            <label for="color_{{ loop.index0 }}">Couleur :</label>
-            <input type="color" id="color_{{ loop.index0 }}" name="color_{{ loop.index0 }}" value="#ff0000">
-
-            <form action="/turn_on_band/{{ loop.index0 }}" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Allumer Bande {{ loop.index }}</button>
-            </form>
-            <form action="/clear_band/{{ loop.index0 }}" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Éteindre Bande {{ loop.index }}</button>
-            </form>
-        </div>
-        {% endfor %}
-
-        <div class="button-container" style="text-align: center;">
-            <form action="/turn_on" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Allumer toutes les LEDs</button>
-            </form>
-            <form action="/clear" method="post" style="display: inline-block;">
-                <button type="submit" class="btn-action">Éteindre toutes les LEDs</button>
-            </form>
-        </div>
+        <button onclick="turnOn()">Allumer</button>
+        <button onclick="turnOff()">Éteindre</button>
     </div>
 
     <script>
-        function updateEffect(bandIndex, effect) {
-            fetch(`/update_param`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ [`effect_${bandIndex}`]: effect })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur réseau');
-                }
-                return response.json();
-            })
-            .then(() => {
-                // Mettre à jour l'effet actif affiché
-                document.getElementById(`active_effect_${bandIndex}`).innerText = effect;
-            })
-            .catch(error => {
-                console.error('Erreur avec la requête fetch:', error);
-            });
+        function updateEffect() {
+            const effect = document.getElementById("effect").value;
+            sendUpdate({ effect });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            {% for band in bands %}
-                document.getElementById('effect_{{ loop.index0 }}').addEventListener('change', function() {
-                    updateEffect({{ loop.index0 }}, this.value);
-                });
-            {% endfor %}
-        });
+        function updateColor() {
+            const color = document.getElementById("color").value;
+            sendUpdate({ color });
+        }
+
+        function updateBrightness() {
+            const brightness = document.getElementById("brightness").value;
+            sendUpdate({ brightness });
+        }
+
+        function updateSpeed() {
+            const speed = document.getElementById("speed").value;
+            sendUpdate({ speed });
+        }
+
+        function turnOn() {
+            fetch('/turn_on', { method: 'POST' });
+        }
+
+        function turnOff() {
+            fetch('/clear', { method: 'POST' });
+        }
+
+        function sendUpdate(data) {
+            fetch('/update_param', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        }
     </script>
 </body>
 </html>
