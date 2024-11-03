@@ -56,6 +56,11 @@
         button:hover {
             background-color: {{ interface_settings['button_hover_color'] }};
         }
+        .active-effect {
+            font-style: italic;
+            color: #888;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -72,12 +77,17 @@
             <label for="num_leds_{{ loop.index0 }}">Nombre de LEDs (Bande {{ loop.index }}) :</label>
             <input type="number" id="num_leds_{{ loop.index0 }}" value="{{ band.count }}" disabled>
 
-            <label for="effect_{{ loop.index0 }}">Effet pour Bande {{ loop.index }} :</label>
+            <label>Effet Actif : <span id="active_effect_{{ loop.index0 }}" class="active-effect">{{ band.default_effect }}</span></label>
+
+            <label for="effect_{{ loop.index0 }}">Sélectionner un Effet :</label>
             <select id="effect_{{ loop.index0 }}">
                 {% for effect in effects %}
-                    <option value="{{ effect }}">{{ effect }}</option>
+                    <option value="{{ effect }}" {% if effect == band.default_effect %}selected{% endif %}>{{ effect }}</option>
                 {% endfor %}
             </select>
+
+            <label for="color_{{ loop.index0 }}">Couleur :</label>
+            <input type="color" id="color_{{ loop.index0 }}" name="color_{{ loop.index0 }}" value="#ff0000">
 
             <form action="/turn_on_band/{{ loop.index0 }}" method="post" style="display: inline-block;">
                 <button type="submit" class="btn-action">Allumer Bande {{ loop.index }}</button>
@@ -110,6 +120,10 @@
                     throw new Error('Erreur réseau');
                 }
                 return response.json();
+            })
+            .then(() => {
+                // Mettre à jour l'effet actif affiché
+                document.getElementById(`active_effect_${bandIndex}`).innerText = effect;
             })
             .catch(error => {
                 console.error('Erreur avec la requête fetch:', error);
