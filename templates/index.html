@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gyro Mowgli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: {{ interface_settings['background_color'] }};
             color: {{ interface_settings['text_color'] }};
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,26 +19,27 @@
             flex-direction: column;
         }
         .container {
-            background: {{ interface_settings['section_color'] }};
-            padding: 20px;
+            background-color: {{ interface_settings['section_color'] }};
+            padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             box-sizing: border-box;
         }
         h1 {
             margin-bottom: 20px;
+            font-weight: 700;
         }
         .led-section {
             padding: 15px;
-            border-radius: 8px;
             margin-bottom: 15px;
+            border-radius: 8px;
             background-color: {{ interface_settings['section_color'] }};
         }
         label {
-            display: block;
-            margin: 10px 0;
             font-weight: bold;
+            margin: 10px 0;
+            display: block;
         }
         input, select, button {
             width: 100%;
@@ -54,12 +56,6 @@
         button:hover {
             background-color: {{ interface_settings['button_hover_color'] }};
         }
-        input[type="color"] {
-            width: 50px;
-            height: 30px;
-            padding: 0;
-            border: none;
-        }
     </style>
 </head>
 <body>
@@ -69,31 +65,29 @@
         {% for band in bands %}
         <div class="led-section">
             <label>
-                <input type="checkbox" id="activate_band_{{ loop.index }}" name="activate_band_{{ loop.index }}" {% if loop.index == 1 %}checked{% endif %}>
+                <input type="checkbox" id="activate_band_{{ loop.index0 }}" name="activate_band_{{ loop.index0 }}" {% if loop.index == 1 %}checked{% endif %}>
                 Activer Bande {{ loop.index }}
             </label>
 
-            <label for="num_leds_{{ loop.index }}">Nombre de LEDs (Bande {{ loop.index }}) :</label>
-            <input type="number" id="num_leds_{{ loop.index }}" value="{{ band.count }}" disabled>
+            <label for="num_leds_{{ loop.index0 }}">Nombre de LEDs (Bande {{ loop.index }}) :</label>
+            <input type="number" id="num_leds_{{ loop.index0 }}" value="{{ band.count }}" disabled>
 
-            <label for="effect_{{ loop.index }}">Effet pour Bande {{ loop.index }} :</label>
-            <select id="effect_{{ loop.index }}">
+            <label for="effect_{{ loop.index0 }}">Effet pour Bande {{ loop.index }} :</label>
+            <select id="effect_{{ loop.index0 }}">
                 {% for effect in effects %}
                     <option value="{{ effect }}">{{ effect }}</option>
                 {% endfor %}
             </select>
 
-            <!-- Boutons pour allumer et éteindre chaque bande individuellement -->
-            <form action="/turn_on_band/{{ loop.index }}" method="post" style="display: inline-block;">
+            <form action="/turn_on_band/{{ loop.index0 }}" method="post" style="display: inline-block;">
                 <button type="submit" class="btn-action">Allumer Bande {{ loop.index }}</button>
             </form>
-            <form action="/clear_band/{{ loop.index }}" method="post" style="display: inline-block;">
+            <form action="/clear_band/{{ loop.index0 }}" method="post" style="display: inline-block;">
                 <button type="submit" class="btn-action">Éteindre Bande {{ loop.index }}</button>
             </form>
         </div>
         {% endfor %}
 
-        <!-- Boutons globaux pour allumer et éteindre toutes les LEDs -->
         <div class="button-container" style="text-align: center;">
             <form action="/turn_on" method="post" style="display: inline-block;">
                 <button type="submit" class="btn-action">Allumer toutes les LEDs</button>
@@ -105,23 +99,44 @@
     </div>
 
     <script>
-        function collectBandStates() {
-            const bandStates = {};
-            {% for band in bands %}
-                bandStates["activate_band_{{ loop.index }}"] = document.getElementById("activate_band_{{ loop.index }}").checked;
-            {% endfor %}
-            return bandStates;
-        }
-
-        document.querySelector('form[action="/turn_on"]').onsubmit = function() {
-            const bandStates = collectBandStates();
-            fetch('/set_band_states', {
+        function updateParameter(param, value) {
+            fetch(`/update_param`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bandStates)
+                body: JSON.stringify({ [param]: value })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
             });
-            return true;
-        };
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggleBtn = document.querySelector('.theme-toggle');
+
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                themeToggleBtn.innerHTML = '🌙';
+            } else {
+                body.classList.add('light-theme');
+                themeToggleBtn.innerHTML = '☀️';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for band in bands %}
+                document.getElementById('activate_band_{{ loop.index0 }}').addEventListener('change', function() {
+                    const bandSettings = document.getElementById('band_{{ loop.index0 }}_settings');
+                    bandSettings.style.display = this.checked ? 'block' : 'none';
+                });
+            {% endfor %}
+        });
     </script>
 </body>
 </html>

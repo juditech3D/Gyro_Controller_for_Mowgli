@@ -142,6 +142,15 @@ def clear():
         strips[i].show()
     return redirect(url_for('index'))
 
+# Route de test pour allumer 14 LEDs en rouge sur la bande 1
+@app.route('/test_band', methods=['POST'])
+def test_band():
+    strip = strips[0]  # Test sur la bande 1
+    for i in range(14):  # Allume 14 LEDs
+        strip.set_pixel(i, 255, 0, 0)  # Rouge
+    strip.show()
+    return "Test effectué : 14 LEDs allumées en rouge sur la bande 1"
+
 # Lancer le serveur Flask
 if __name__ == '__main__':
     app.run(host=host, port=port, debug=True)
