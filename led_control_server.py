@@ -48,9 +48,8 @@ stop_threads = [False] * len(bands)
 band_states = [True] + [False] * (len(bands) - 1)  # Seule la bande 1 (index 0) est activée par défaut
 
 # Fonction pour appliquer un effet spécifique sur une bande
-def apply_effect(band_index, effect_name):
-    if not band_states[band_index]:
-        return
+def apply_effect(band_index):
+    effect_name = bands[band_index].get('current_effect', 'static')
     effect_params = effects.get(effect_name, {})
     strip = strips[band_index]
     stop_threads[band_index] = False
@@ -96,14 +95,22 @@ def set_band_states():
     band_states = [data.get(f"activate_band_{i}", True) for i in range(len(bands))]
     return jsonify(success=True)
 
-# Route pour allumer les LEDs avec l'effet par défaut de chaque bande activée
+# Route pour mettre à jour l'effet de chaque bande
+@app.route('/update_param', methods=['POST'])
+def update_param():
+    data = request.get_json()
+    for band_index in range(len(bands)):
+        if f"effect_{band_index}" in data:
+            bands[band_index]['current_effect'] = data[f"effect_{band_index}"]
+    return jsonify(success=True)
+
+# Route pour allumer une bande individuelle
 @app.route('/turn_on_band/<int:band_index>', methods=['POST'])
 def turn_on_band(band_index):
-    effect_name = bands[band_index]['default_effect']
     if current_threads[band_index] is not None and current_threads[band_index].is_alive():
         stop_threads[band_index] = True
         current_threads[band_index].join()
-    current_threads[band_index] = threading.Thread(target=apply_effect, args=(band_index, effect_name))
+    current_threads[band_index] = threading.Thread(target=apply_effect, args=(band_index,))
     current_threads[band_index].start()
     return redirect(url_for('index'))
 
@@ -123,11 +130,10 @@ def turn_on():
     for i, band in enumerate(bands):
         if not band_states[i]:  # Vérifie si la bande est activée
             continue
-        effect_name = band['default_effect']
         if current_threads[i] is not None and current_threads[i].is_alive():
             stop_threads[i] = True
             current_threads[i].join()
-        current_threads[i] = threading.Thread(target=apply_effect, args=(i, effect_name))
+        current_threads[i] = threading.Thread(target=apply_effect, args=(i,))
         current_threads[i].start()
     return redirect(url_for('index'))
 
@@ -141,15 +147,6 @@ def clear():
         strips[i].clear_strip()
         strips[i].show()
     return redirect(url_for('index'))
-
-# Route de test pour allumer 14 LEDs en rouge sur la bande 1
-@app.route('/test_band', methods=['POST'])
-def test_band():
-    strip = strips[0]  # Test sur la bande 1
-    for i in range(14):  # Allume 14 LEDs
-        strip.set_pixel(i, 255, 0, 0)  # Rouge
-    strip.show()
-    return "Test effectué : 14 LEDs allumées en rouge sur la bande 1"
 
 # Lancer le serveur Flask
 if __name__ == '__main__':

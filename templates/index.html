@@ -99,41 +99,27 @@
     </div>
 
     <script>
-        function updateParameter(param, value) {
+        function updateEffect(bandIndex, effect) {
             fetch(`/update_param`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ [param]: value })
+                body: JSON.stringify({ [`effect_${bandIndex}`]: effect })
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Erreur réseau');
                 }
                 return response.json();
             })
             .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+                console.error('Erreur avec la requête fetch:', error);
             });
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const themeToggleBtn = document.querySelector('.theme-toggle');
-
-            if (body.classList.contains('light-theme')) {
-                body.classList.remove('light-theme');
-                themeToggleBtn.innerHTML = '🌙';
-            } else {
-                body.classList.add('light-theme');
-                themeToggleBtn.innerHTML = '☀️';
-            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             {% for band in bands %}
-                document.getElementById('activate_band_{{ loop.index0 }}').addEventListener('change', function() {
-                    const bandSettings = document.getElementById('band_{{ loop.index0 }}_settings');
-                    bandSettings.style.display = this.checked ? 'block' : 'none';
+                document.getElementById('effect_{{ loop.index0 }}').addEventListener('change', function() {
+                    updateEffect({{ loop.index0 }}, this.value);
                 });
             {% endfor %}
         });
