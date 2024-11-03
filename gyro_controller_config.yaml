@@ -12,6 +12,8 @@ pins:
 led:
   led_count: 14          # Nombre de LEDs sur la bande
 
+auto_update: false       # Paramètre pour activer/désactiver la mise à jour automatique
+
 # Couleurs de l'interface
 interface:
   background_color: "#2c3e50"

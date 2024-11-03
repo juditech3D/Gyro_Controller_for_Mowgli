@@ -4,50 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gyro Mowgli - Contrôle LED</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            text-align: center;
-            flex-direction: column;
-        }
-        .container {
-            background-color: #34495e;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            box-sizing: border-box;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #e74c3c;
-            color: #ecf0f1;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #c0392b;
-        }
+        body { font-family: Arial, sans-serif; background-color: #2c3e50; color: #ecf0f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: #34495e; padding: 20px; border-radius: 8px; width: 300px; text-align: center; }
+        label { display: block; margin-top: 10px; }
+        input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: none; }
+        button { background-color: #e74c3c; color: #fff; cursor: pointer; }
+        button:hover { background-color: #c0392b; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -71,21 +35,45 @@
         <input type="range" id="speed" min="1" max="100" value="50" onchange="updateParameter('speed', this.value)">
 
         <button onclick="turnOff()">Éteindre les LEDs</button>
+
+        <label for="auto_update">Mise à jour automatique</label>
+        <input type="checkbox" id="auto_update" onchange="toggleAutoUpdate(this.checked)">
+
+        <button id="restartButton" class="hidden" onclick="restartServer()">Redémarrer le serveur</button>
     </div>
 
     <script>
         function updateParameter(param, value) {
-            const data = { [param]: value };
             fetch('/update_param', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify({ [param]: value })
             });
         }
 
         function turnOff() {
             fetch('/clear', { method: 'POST' });
         }
+
+        function toggleAutoUpdate(enabled) {
+            fetch('/toggle_auto_update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ auto_update: enabled })
+            });
+        }
+
+        function restartServer() {
+            fetch('/restart', { method: 'POST' });
+        }
+
+        setInterval(() => {
+            fetch('/check_update')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('restartButton').classList.toggle('hidden', !data.update_detected);
+                });
+        }, 5000); // Vérifie toutes les 5 secondes
     </script>
 </body>
 </html>
