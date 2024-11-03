@@ -19,7 +19,7 @@ clock_pin = pins['clock_pin']
 
 # Paramètres pour une seule bande
 led_count = 14  # Exemple de valeur
-brightness = 50
+brightness = max(0, min(31, 15))  # Valeur de luminosité initiale, limitée à 0-31
 color = "#ff0000"
 speed = 50
 effect = "static"
@@ -81,7 +81,7 @@ def update_param():
 
     effect = data.get("effect", effect)
     color = data.get("color", color)
-    brightness = int(data.get("brightness", brightness))
+    brightness = max(0, min(31, int(data.get("brightness", brightness))))  # Limiter à la plage 0-31
     speed = int(data.get("speed", speed))
 
     return jsonify(success=True)
