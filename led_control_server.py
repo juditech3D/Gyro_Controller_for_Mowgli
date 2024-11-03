@@ -96,6 +96,18 @@ def update_param():
 
     return jsonify(success=True)
 
+# Route pour éteindre la bande
+@app.route('/clear', methods=['POST'])
+def clear():
+    global stop_thread, current_thread
+    stop_thread = True
+    if current_thread is not None and current_thread.is_alive():
+        current_thread.join()
+
+    strip.clear_strip()
+    strip.show()
+    return jsonify(success=True)
+
 # Lancer le serveur
 if __name__ == '__main__':
     app.run(host=host, port=port, debug=True)

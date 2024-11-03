@@ -32,13 +32,21 @@
             margin-top: 15px;
             margin-bottom: 5px;
         }
-        input, select {
+        input, select, button {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
             border: none;
             border-radius: 5px;
             box-sizing: border-box;
+        }
+        button {
+            background-color: #e74c3c;
+            color: #ecf0f1;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
@@ -61,6 +69,8 @@
 
         <label for="speed">Vitesse</label>
         <input type="range" id="speed" min="1" max="100" value="50" onchange="updateParameter('speed', this.value)">
+
+        <button onclick="turnOff()">Éteindre les LEDs</button>
     </div>
 
     <script>
@@ -71,6 +81,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+        }
+
+        function turnOff() {
+            fetch('/clear', { method: 'POST' });
         }
     </script>
 </body>
