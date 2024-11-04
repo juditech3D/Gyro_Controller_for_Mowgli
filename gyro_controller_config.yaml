@@ -1,27 +1,22 @@
-auto_update: true
-
-# gyro_controller_config.yaml
-
-network:
-  ip_address: "0.0.0.0"
-  port: 5000
-
-# Pins pour le contrôle du bandeau LED
-pins:
-  data_pin: 18
-  clock_pin: 23
-
-led:
-  count: 14  # Assurez-vous de définir le nombre de LEDs ici
-  type: "APA102"
-
-auto_update: false       # Paramètre pour activer/désactiver la mise à jour automatique
-
-# Couleurs de l'interface
+auto_update: true  # Option de mise à jour automatique activée (true) ou désactivée (false)
 
 interface:
-  background_color: '#2c3e50'
-  button_color: '#3498db'
-  button_hover_color: '#2980b9'
-  section_color: '#3b5998'
-  text_color: '#ecf0f1'
+  background_color: '#2c3e50'  # Couleur de fond de l'interface
+  button_color: '#3498db'  # Couleur des boutons
+  button_hover_color: '#2980b9'  # Couleur des boutons au survol
+  section_color: '#3b5998'  # Couleur de fond pour les sections d'affichage
+  text_color: '#ecf0f1'  # Couleur du texte affiché
+
+led:
+  type: "APA102"  # Type de bande LED utilisé
+  count: 14  # Nombre de LEDs dans la bande
+  data_pin: 18  # Numéro de broche GPIO pour les données
+  clock_pin: 23  # Numéro de broche GPIO pour l'horloge
+
+network:
+  ip_address: 0.0.0.0  # Adresse IP pour le serveur Flask
+  port: 5000  # Port utilisé par le serveur pour écouter les connexions
+
+pins:
+  clock_pin: 23  # Broche GPIO pour l'horloge des LEDs
+  data_pin: 18  # Broche GPIO pour les données des LEDs
