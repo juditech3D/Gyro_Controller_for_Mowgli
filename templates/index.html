@@ -43,6 +43,18 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/get_initial_state')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('effect').value = data.effect;
+                    document.getElementById('color').value = data.color;
+                    document.getElementById('brightness').value = data.brightness;
+                    document.getElementById('speed').value = data.speed;
+                    document.getElementById('auto_update').checked = data.auto_update;
+                });
+        });
+
         function updateParameter(param, value) {
             fetch('/update_param', {
                 method: 'POST',
@@ -73,7 +85,7 @@
                 .then(data => {
                     document.getElementById('restartButton').classList.toggle('hidden', !data.update_detected);
                 });
-        }, 5000); // Vérifie toutes les 5 secondes
+        }, 5000);
     </script>
 </body>
 </html>
