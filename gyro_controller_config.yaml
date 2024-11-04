@@ -1,3 +1,6 @@
+
+auto_update: true
+
 # gyro_controller_config.yaml
 
 network:
@@ -16,9 +19,10 @@ led:
 auto_update: false       # Paramètre pour activer/désactiver la mise à jour automatique
 
 # Couleurs de l'interface
+
 interface:
-  background_color: "#2c3e50"
-  section_color: "#3b5998"
-  text_color: "#ecf0f1"
-  button_color: "#3498db"
-  button_hover_color: "#2980b9"
+  background_color: '#2c3e50'
+  button_color: '#3498db'
+  button_hover_color: '#2980b9'
+  section_color: '#3b5998'
+  text_color: '#ecf0f1'
