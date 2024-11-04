@@ -73,6 +73,14 @@ def apply_effect():
                 strip.show()
                 time.sleep(delay)
 
+# Fonction pour éteindre toutes les LEDs, même si le nombre de LEDs excède la configuration
+def clear_all_leds(total_led_count):
+    strip.global_brightness = 0  # Assurez-vous que la luminosité est au minimum
+    for i in range(total_led_count):  # Utilisez un nombre de LEDs plus élevé que configuré
+        strip.set_pixel(i, 0, 0, 0)
+    strip.show()
+               
+
 # Route pour afficher la page principale
 @app.route('/')
 def index():
@@ -106,10 +114,11 @@ def turn_off():
     global stop_thread, current_thread
     stop_thread = True
     if current_thread is not None and current_thread.is_alive():
-        current_thread.join()
-    strip.clear_strip()
-    strip.show()
+        current_thread.join(timeout=2)  # Donne 2 secondes pour terminer le thread
+    clear_all_leds(100)  # Spécifiez le nombre total de LEDs à éteindre (par exemple, 100)
     return jsonify(success=True)
+
+
 
 if __name__ == '__main__':
     app.run(host=host, port=port)
