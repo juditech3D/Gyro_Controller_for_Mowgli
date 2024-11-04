@@ -1,5 +1,7 @@
-auto_update: true  # Option de mise à jour automatique activée (true) ou désactivée (false)
+# Option de mise à jour automatique activée (true) ou désactivée (false)
+auto_update: true
 
+# Paramètres de l'interface utilisateur
 interface:
   background_color: '#2c3e50'  # Couleur de fond de l'interface
   button_color: '#3498db'  # Couleur des boutons
@@ -7,16 +9,14 @@ interface:
   section_color: '#3b5998'  # Couleur de fond pour les sections d'affichage
   text_color: '#ecf0f1'  # Couleur du texte affiché
 
+# Configuration de la bande LED
 led:
   type: "APA102"  # Type de bande LED utilisé
   count: 14  # Nombre de LEDs dans la bande
   data_pin: 18  # Numéro de broche GPIO pour les données
   clock_pin: 23  # Numéro de broche GPIO pour l'horloge
 
+# Configuration réseau pour le serveur Flask
 network:
-  ip_address: 0.0.0.0  # Adresse IP pour le serveur Flask
+  ip_address: "0.0.0.0"  # Adresse IP pour le serveur Flask
   port: 5000  # Port utilisé par le serveur pour écouter les connexions
-
-pins:
-  clock_pin: 23  # Broche GPIO pour l'horloge des LEDs
-  data_pin: 18  # Broche GPIO pour les données des LEDs
