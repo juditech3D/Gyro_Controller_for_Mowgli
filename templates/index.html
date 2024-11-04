@@ -3,79 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gyro Mowgli</title>
+    <title>Gyro Mowgli LED Controller</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #000000;
-            color: #ecf0f1;
+            background-color: {{ color }};
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            flex-direction: column;
         }
         .container {
-            background-color: #34495e;
+            background-color: #2c3e50;
             padding: 20px;
             border-radius: 8px;
-            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             width: 300px;
+            text-align: center;
         }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        input[type="color"], input[type="range"], select, button {
+        input[type="range"], select {
             width: 100%;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
+            margin: 10px 0;
         }
         button {
-            background-color: #e73c3c;
+            background-color: #e74c3c;
             color: white;
+            border: none;
+            padding: 10px 20px;
             cursor: pointer;
-        }
-        button:hover {
-            background-color: #c0392b;
+            font-size: 1em;
+            margin-top: 10px;
         }
     </style>
+    <script>
+        // Fonction pour mettre à jour les paramètres de la bande LED
+        function updateParameter(param, value) {
+            fetch('/update_param', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ [param]: value })
+            }).then(response => response.json());
+        }
+
+        // Fonction pour éteindre les LEDs
+        function turnOffLEDs() {
+            fetch('/turn_off', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json());
+        }
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Gyro Mowgli - Contrôle LED</h1>
-        
-        <label for="color">Couleur</label>
-        <input type="color" id="color" value="{{ color }}" onchange="updateParameter('color', this.value)">
+        <h1>Contrôleur LED</h1>
 
         <label for="brightness">Luminosité</label>
-        <input type="range" id="brightness" min="0" max="31" value="{{ brightness }}" onchange="updateParameter('brightness', this.value)">
+        <input type="range" id="brightness" min="1" max="31" value="{{ brightness }}" oninput="updateParameter('brightness', this.value)">
+
+        <label for="speed">Vitesse</label>
+        <input type="range" id="speed" min="1" max="100" value="{{ speed }}" oninput="updateParameter('speed', this.value)">
 
         <label for="effect">Effet</label>
         <select id="effect" onchange="updateParameter('effect', this.value)">
-            <option value="static" {% if effect == 'static' %}selected{% endif %}>Statique</option>
+            <option value="static" {% if effect == 'static' %}selected{% endif %}>Fixe</option>
             <option value="wipe" {% if effect == 'wipe' %}selected{% endif %}>Balayage</option>
             <option value="rainbow" {% if effect == 'rainbow' %}selected{% endif %}>Arc-en-ciel</option>
         </select>
 
-        <button onclick="clearLEDs()">Éteindre les LEDs</button>
+        <button onclick="turnOffLEDs()">Éteindre les LEDs</button>
     </div>
-
-    <script>
-        function updateParameter(param, value) {
-            fetch('/update_param', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ [param]: value })
-            });
-        }
-
-        function clearLEDs() {
-            fetch('/clear', { method: 'POST' });
-        }
-    </script>
 </body>
 </html>
+
