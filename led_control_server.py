@@ -19,8 +19,8 @@ led_settings = config['led']
 # Paramètres réseau et matériel
 host = network_settings['ip_address']
 port = network_settings['port']
-data_pin = pins['data_pin']
-clock_pin = pins['clock_pin']
+data_pin = config['led']['data_pin']
+clock_pin = config['led']['clock_pin']
 led_count = led_settings['count']
 
 # Paramètres de luminosité, vitesse et effet
