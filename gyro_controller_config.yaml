@@ -10,7 +10,8 @@ pins:
   clock_pin: 23
 
 led:
-  led_count: 14          # Nombre de LEDs sur la bande
+  count: 14  # Assurez-vous de définir le nombre de LEDs ici
+  type: "APA102"
 
 auto_update: false       # Paramètre pour activer/désactiver la mise à jour automatique
 
