@@ -29,6 +29,12 @@ current_thread = None
 # Initialiser la bande LED
 strip = apa102.APA102(num_led=led_count, global_brightness=15, mosi=data_pin, sclk=clock_pin)
 
+# Initialiser les paramètres globaux
+brightness = 15
+color = "#ff0000"
+speed = 50
+effect = "static"
+
 # Fonction pour vérifier et appliquer les mises à jour
 def auto_update_repo():
     global update_detected
@@ -75,7 +81,7 @@ def index():
 # Route pour mettre à jour les paramètres de la bande LED
 @app.route('/update_param', methods=['POST'])
 def update_param():
-    global brightness, color, effect, speed
+    global brightness, color, effect, speed, stop_thread, current_thread
     data = request.get_json()
 
     # Mettre à jour les paramètres en fonction des données reçues
