@@ -1,0 +1,15 @@
+auto_update: true
+interface:
+  background_color: '#2c3e50'
+  button_color: '#3498db'
+  button_hover_color: '#2980b9'
+  section_color: '#3b5998'
+  text_color: '#ecf0f1'
+led:
+  led_count: 14
+network:
+  ip_address: 0.0.0.0
+  port: 5000
+pins:
+  clock_pin: 23
+  data_pin: 18
