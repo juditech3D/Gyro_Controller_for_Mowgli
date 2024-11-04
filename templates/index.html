@@ -3,58 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gyro Mowgli - Contrôle LED</title>
+    <title>Gyro Mowgli</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #2c3e50; color: #ecf0f1; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background-color: #34495e; padding: 20px; border-radius: 8px; width: 300px; text-align: center; }
-        label { display: block; margin-top: 10px; }
-        input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: none; }
-        button { background-color: #e74c3c; color: #fff; cursor: pointer; }
-        button:hover { background-color: #c0392b; }
-        .hidden { display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #ecf0f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="color"], input[type="range"], select, button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #e73c3c;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Contrôle LED</h1>
+        <h1>Gyro Mowgli - Contrôle LED</h1>
+        
+        <label for="color">Couleur</label>
+        <input type="color" id="color" value="{{ color }}" onchange="updateParameter('color', this.value)">
+
+        <label for="brightness">Luminosité</label>
+        <input type="range" id="brightness" min="0" max="31" value="{{ brightness }}" onchange="updateParameter('brightness', this.value)">
 
         <label for="effect">Effet</label>
         <select id="effect" onchange="updateParameter('effect', this.value)">
-            <option value="static">Couleur Statique</option>
-            <option value="wipe">Balayage</option>
-            <option value="rainbow">Arc-en-ciel</option>
+            <option value="static" {% if effect == 'static' %}selected{% endif %}>Statique</option>
+            <option value="wipe" {% if effect == 'wipe' %}selected{% endif %}>Balayage</option>
+            <option value="rainbow" {% if effect == 'rainbow' %}selected{% endif %}>Arc-en-ciel</option>
         </select>
 
-        <label for="color">Couleur</label>
-        <input type="color" id="color" value="#ff0000" onchange="updateParameter('color', this.value)">
-
-        <label for="brightness">Luminosité</label>
-        <input type="range" id="brightness" min="0" max="31" value="15" onchange="updateParameter('brightness', this.value)">
-
-        <label for="speed">Vitesse</label>
-        <input type="range" id="speed" min="1" max="100" value="50" onchange="updateParameter('speed', this.value)">
-
-        <button onclick="turnOff()">Éteindre les LEDs</button>
-
-        <label for="auto_update">Mise à jour automatique</label>
-        <input type="checkbox" id="auto_update" onchange="toggleAutoUpdate(this.checked)">
-
-        <button id="restartButton" class="hidden" onclick="restartServer()">Redémarrer le serveur</button>
+        <button onclick="clearLEDs()">Éteindre les LEDs</button>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('/get_initial_state')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('effect').value = data.effect;
-                    document.getElementById('color').value = data.color;
-                    document.getElementById('brightness').value = data.brightness;
-                    document.getElementById('speed').value = data.speed;
-                    document.getElementById('auto_update').checked = data.auto_update;
-                });
-        });
-
         function updateParameter(param, value) {
             fetch('/update_param', {
                 method: 'POST',
@@ -63,29 +73,9 @@
             });
         }
 
-        function turnOff() {
+        function clearLEDs() {
             fetch('/clear', { method: 'POST' });
         }
-
-        function toggleAutoUpdate(enabled) {
-            fetch('/toggle_auto_update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ auto_update: enabled })
-            });
-        }
-
-        function restartServer() {
-            fetch('/restart', { method: 'POST' });
-        }
-
-        setInterval(() => {
-            fetch('/check_update')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('restartButton').classList.toggle('hidden', !data.update_detected);
-                });
-        }, 5000);
     </script>
 </body>
 </html>
