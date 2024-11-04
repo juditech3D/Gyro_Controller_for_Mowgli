@@ -11,19 +11,18 @@ with open('gyro_controller_config.yaml', 'r') as config_file:
     config = yaml.safe_load(config_file)
 
 # Extraire les paramètres de configuration
-network_settings = config['network']
-pins = config['pins']
-interface_settings = config['interface']
-led_settings = config['led']
+network_settings = config.get('network', {})
+interface_settings = config.get('interface', {})
+led_settings = config.get('led', {})
 
 # Paramètres réseau et matériel
-host = network_settings['ip_address']
-port = network_settings['port']
-data_pin = config['led']['data_pin']
-clock_pin = config['led']['clock_pin']
-led_count = led_settings['count']
+host = network_settings.get('ip_address', '0.0.0.0')
+port = network_settings.get('port', 5000)
+data_pin = led_settings.get('data_pin', 18)
+clock_pin = led_settings.get('clock_pin', 23)
+led_count = led_settings.get('count', 14)
 
-# Paramètres de luminosité, vitesse et effet
+# Paramètres de luminosité, vitesse et effet par défaut
 brightness = led_settings.get('brightness', 10)
 speed = led_settings.get('speed', 50)
 effect = 'static'
@@ -77,7 +76,9 @@ def apply_effect():
 # Route pour afficher la page principale
 @app.route('/')
 def index():
-    return render_template('index.html', brightness=brightness, speed=speed, effect=effect, led_count=led_count, color=interface_settings["color"])
+    # Couleur par défaut si elle n'existe pas
+    color = interface_settings.get("color", "#ffffff")
+    return render_template('index.html', brightness=brightness, speed=speed, effect=effect, led_count=led_count, color=color)
 
 # Route pour mettre à jour les paramètres de la bande LED
 @app.route('/update_param', methods=['POST'])
